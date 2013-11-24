@@ -1,0 +1,20 @@
+#!/bin/bash
+
+make
+cd ConfigApp
+make
+cd ../Import
+make
+cd ..
+
+build="build"
+mkdir $build
+
+cp objects*/fairtrade $build/fairtrade
+cp ConfigApp/objects*/config $build/config
+cp Import/objects*/import $build/import
+
+mkdir $build/pictures
+cp -R pictures/* $build/pictures
+cp klack $build/klack
+cp Readme.txt $build/Readme.txt
