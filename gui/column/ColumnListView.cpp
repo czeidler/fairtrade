@@ -1540,7 +1540,7 @@ void BColumnListView::SaveState(BMessage *msg)
 	for (i = 0; ;i++)
 	{
 		BColumn *col = (BColumn*) fColumns.ItemAt(i);
-		if(!col)
+		if(col == NULL)
 			break;
 		msg->AddInt32("ID",col->fFieldID);
 		msg->AddFloat("width",col->fWidth);
@@ -1554,7 +1554,7 @@ void BColumnListView::SaveState(BMessage *msg)
 		for (i = 0; ;i++)
 		{
 			BColumn *col = (BColumn*) fSortColumns.ItemAt(i);
-			if(!col)
+			if(col == NULL)
 				break;
 			msg->AddInt32("sortID",col->fFieldID);
 			msg->AddBool("sortascending",col->fSortAscending);

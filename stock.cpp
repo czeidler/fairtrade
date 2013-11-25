@@ -22,11 +22,10 @@ basket_f::basket_f(time_t d)
 basket_f::~basket_f()
 {
 	trade_info* trade;
-	for ( int k=0; ; k++){
+	for (int k = 0; ; k++) {
 		trade = (trade_info*)trades.ItemAt(k);
-		if(!trade){
+		if (trade == NULL)
 			break;
-		}
 		delete trade;
 	}
 }
@@ -134,8 +133,6 @@ Stock::AddProduct(product_f &product)
 	if (fDatabase->NumRows() >= 0)
 		productId = atoi(fDatabase->GetValue(0,"id").c_str());
 
-	//PRINT(("new id %i\n", productId));
-	
 	fLock.Unlock();
 
 	return productId;

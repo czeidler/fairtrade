@@ -17,29 +17,29 @@ void DivideSame(BList *list)
 	
 	//find max divider
 	BTextControl *control;
-	for ( int k=0; ; k++){
+	for ( int k = 0; ; k++){
 		control = (BTextControl*)list->ItemAt(k);
-		if(!control){
+		if (control == NULL)
 			break;
-		}
+		
 		if(control->Divider() > maxDivider){
 			maxDivider = control->Divider();
 		}
 	}
 	
 	//set max divider
-	for ( int k=0; ; k++){
+	for (int k = 0; ; k++) {
 		control = (BTextControl*)list->ItemAt(k);
-		if(!control){
+		if (control == NULL)
 			break;
-		}
+		
 		control->SetDivider(maxDivider);
 	}
 }
 
 
 BoxLayout::BoxLayout(BRect rect, const char *name, uint32 resizingMode)
-		:BView(rect, name, resizingMode,B_FRAME_EVENTS)
+	:BView(rect, name, resizingMode,B_FRAME_EVENTS)
 {
 	fListOfViews = new BList;
 	fTotalWeight = 0;
@@ -51,11 +51,10 @@ BoxLayout::BoxLayout(BRect rect, const char *name, uint32 resizingMode)
 BoxLayout::~BoxLayout()
 {
 	view_info* info;
-	for ( int k=0; ; k++){
+	for (int k = 0; ; k++) {
 		info = (view_info*)fListOfViews->ItemAt(k);
-		if(!info){
+		if(info == NULL)
 			break;
-		}
 		delete info;
 	}
 	delete fListOfViews;
@@ -120,11 +119,10 @@ BoxLayout::CalculateViews()
 	{
 		int32 viewNumber = fListOfViews->CountItems();
 		view_info* info;
-		for ( int k=0; ; k++){
+		for (int k = 0; ; k++) {
 			info = (view_info*)fListOfViews->ItemAt(k);
-			if(!info){
+			if (info == NULL)
 				break;
-			}
 			
 			if(fHorizontal)
 			{

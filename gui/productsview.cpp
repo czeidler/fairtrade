@@ -161,11 +161,11 @@ void
 ProductView::UpdateProduct(product_f *product)
 {
 	ProductRow *row;
-	for ( int k=0; ; k++){
+	for (int k = 0; ; k++) {
 		row = (ProductRow*)fProductListView->RowAt(k);
-		if(!row){
+		if (row == NULL)
 			break;
-		}
+		
 		if(row->product == product){
 			if(product->valid == false){
 				fProductListView->RemoveRow(row);
@@ -415,8 +415,7 @@ void
 EditProductWindow::ParseNumberTextControl(BTextControl *textControl)
 {
 	BString content = textControl->Text();
-	for(int32 i = 0; ;i++)
-	{
+	for (int32 i = 0; ;i++) {
 		char c = content.ByteAt(i);
 		if (!c)
 			break;

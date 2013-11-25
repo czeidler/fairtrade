@@ -80,7 +80,7 @@ TradeApp::TradeApp(char *signature)
 	product_f *prod;
 	fStock->GetProducts(fProducts);
 	BMessenger messenger(fMainWindow);
-	for (int k=0; ; k++) {
+	for (int k = 0; ; k++) {
 		prod = (product_f*)fProducts->ItemAt(k);
 		if (prod == NULL)
 			break;
@@ -92,7 +92,7 @@ TradeApp::TradeApp(char *signature)
 	
 	fStock->GetTrades(fTrades);
 	trade_f *trade;
-	for (int k=0; ; k++) {
+	for (int k = 0; ; k++) {
 		trade = (trade_f*)fTrades->ItemAt(k);
 		if (trade == NULL)
 			break;
@@ -123,21 +123,21 @@ TradeApp::~TradeApp()
 	delete fMainWindowMessenger;
 	delete fStock;
 	product_f *prod;
-	for (int k=0; ; k++) {
+	for (int k = 0; k < fProducts->CountItems(); k++) {
 		prod = (product_f*)fProducts->ItemAt(k);
 		delete prod;
 	}
 	delete fProducts;
 	
 	trade_f *trade;
-	for ( int k=0; ; k++) {
+	for (int k = 0; k < fTrades->CountItems(); k++) {
 		trade = (trade_f*)fTrades->ItemAt(k);
 		delete trade;
 	}
 	delete fTrades;
 	
 	basket_f *basket;
-	for (int k=0; ; k++) {
+	for (int k = 0; k < fBaskets->CountItems(); k++) {
 		basket = (basket_f*)fBaskets->ItemAt(k);
 		delete basket;
 	}
@@ -160,7 +160,7 @@ TradeApp::MessageReceived(BMessage *msg)
 	char **arg_v;
 	int32 return_value;
 	thread_id exec_thread;
-	switch(msg->what) {
+	switch (msg->what) {
 		case UNVALID_PRODUCT:
 			product.Instantiate(msg);
 			product.valid = false;
@@ -260,7 +260,7 @@ TradeApp::UpdateProduct(BMessage *archive)
 		prod->Instantiate(archive);
 
 	BMessage msg(UPDATE_PRODUCT);
-	msg.AddPointer("product",prod);
+	msg.AddPointer("product", prod);
 	fMainWindowMessenger->SendMessage(&msg);
 }
 
@@ -367,7 +367,7 @@ product_f*
 TradeApp::FindProduct(int32 id)
 {
 	product_f *prod;
-	for (int k=0; ; k++) {
+	for (int k = 0; ; k++) {
 		prod = (product_f*)fProducts->ItemAt(k);
 		if (prod == NULL)
 			break;
@@ -384,7 +384,7 @@ trade_info*
 TradeApp::FindTrade(int32 productId, basket_f *basket)
 {
 	trade_info *tradeInfo;
-	for (int k=0; ; k++) {
+	for (int k = 0; ; k++) {
 		tradeInfo = (trade_info*)basket->trades.ItemAt(k);
 		if (tradeInfo == NULL)
 			break;
@@ -400,7 +400,7 @@ product_f*
 TradeApp::FindProduct(BString barcode)
 {
 	product_f *prod;
-	for (int k=0; ; k++) {
+	for (int k = 0; ; k++) {
 		prod = (product_f*)fProducts->ItemAt(k);
 		if (prod == NULL)
 			break;
@@ -416,7 +416,7 @@ basket_f*
 TradeApp::FindBasket(time_t date)
 {
 	basket_f *basket;
-	for (int k=0; ; k++) {
+	for (int k = 0; ; k++) {
 		basket = (basket_f*)fBaskets->ItemAt(k);
 		if (basket == NULL)
 			break;
@@ -432,7 +432,7 @@ void
 TradeApp::SaveBasket(basket_f *basket)
 {
 	trade_info *info;
-	for (int k=0; ; k++) {
+	for (int k = 0; ; k++) {
 		info = (trade_info*)basket->trades.ItemAt(k);
 		if (info == NULL)
 			break;
@@ -508,7 +508,7 @@ TradeApp::ExportTable()
 	BString lableString = "Barcode\tName\tKommentar\tPreis\tBestand\tEingefuegt\n";
 	productFile.Write(lableString.String(),lableString.Length());
 	product_f *prod;
-	for (int k=0; ; k++) {
+	for (int k = 0; ; k++) {
 		prod = (product_f*)fProducts->ItemAt(k);
 		if (prod == NULL)
 			break;
@@ -560,7 +560,7 @@ TradeApp::ExportTable()
 	int32 monthOfTrade = -1;
 	BString outSimpleString = "";
 	struct tm *time;
-	for (int k=0; ; k++) {
+	for (int k = 0; ; k++) {
 		basket = (basket_f*)fBaskets->ItemAt(k);
 		if (basket == NULL) {
 			if(dayOfTrade > 0){
@@ -600,7 +600,7 @@ TradeApp::ExportTable()
 			//detail trade list
 			BString outDetailString = "";
 			trade_info *tradeInfo;
-			for (int k=0; ; k++) {
+			for (int k = 0; ; k++) {
 				tradeInfo = (trade_info*)basket->trades.ItemAt(k);
 				if (tradeInfo == NULL)
 					break;

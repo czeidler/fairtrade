@@ -325,11 +325,11 @@ void
 SellView::UpdateTrade(trade_info *tradeInfo)
 {
 	TradeRow *row;
-	for ( int k=0; ; k++){
+	for (int k = 0; ; k++) {
 		row = (TradeRow*)fTradeListView->RowAt(k);
-		if(!row){
+		if (row == NULL)
 			break;
-		}
+		
 		if(row->fTradeInfo == tradeInfo){
 			BStringField *stringfield;
 			BString number;
@@ -464,7 +464,7 @@ SellView::ShowBasket(basket_f *basket)
 	}
 	//fill trades
 	trade_info *info;
-	for (int k=0; ; k++){
+	for (int k = 0; ; k++) {
 		info = (trade_info*)basket->trades.ItemAt(k);
 		if (info == NULL)
 			break;
