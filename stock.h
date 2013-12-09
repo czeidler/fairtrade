@@ -69,21 +69,25 @@ typedef struct trade_info
 
 class Stock
 {
-	public:
-		Stock(BString filename);
-		~Stock();
+public:
+								Stock(BString filename);
+								~Stock();
+		//! If product is already in the list the product will be updated.
+		int32					AddProduct(product_f &product);
+		//! If trade is already in the list the trade will be updated.
+		int32					AddTrade(trade_f &trade);
+		void					UpdateTrade(uint id, trade_f &trade);
+		void					UpdateProduct(uint id, product_f &product);
+		void					RemoveTrade(uint id);
+		status_t				GetProducts(BList* list);
+		status_t				GetTrades(BList* list);
 		
-		int32 AddProduct(product_f &product); //if product already in the list the product will be updated
-		int32 AddTrade(trade_f &trade);		 //if trade already in the list the trade will be updated
-		void UpdateTrade(uint id, trade_f &trade);
-		void UpdateProduct(uint id, product_f &product);
-		void RemoveTrade(uint id);
-		status_t GetProducts(BList* list);
-		status_t GetTrades(BList* list);
-		
-	private:
-		SQLiteConnection *fDatabase;
-		BLocker fLock;
+		//! Sets the product count to zero for all products (inventory).
+		status_t				ResetProductsCount();
+
+private:
+		SQLiteConnection*		fDatabase;
+		BLocker					fLock;
 };
 
 

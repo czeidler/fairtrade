@@ -15,7 +15,7 @@ main(int argc, char* argv[])
 	}
 	const char* inputFile = argv[1];
 	const char* database = argv[2];
-	
+
 	ImportProducts importer(inputFile, database);
 	importer.Import();
 	return 0;

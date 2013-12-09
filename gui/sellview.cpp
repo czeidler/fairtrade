@@ -13,6 +13,7 @@
 #define DEBUG 1
 #include <Debug.h>
 
+#include "fairtrade.h"
 #include "mainwindow.h"
 
 

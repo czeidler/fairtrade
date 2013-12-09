@@ -5,6 +5,7 @@
 
 #include "mainwindow.h"
 
+#include <Alert.h>
 #include <Font.h>
 #include <Message.h>
 #include <Screen.h>
@@ -15,6 +16,9 @@
 
 #define DEBUG 1
 #include <Debug.h>
+
+#include "fairtrade.h"
+
 
 const int32 PRE_POST_FIX = 92; //pre and postfix char
 
@@ -75,13 +79,14 @@ BitmapView::GetPreferredSize(float *width, float *height)
 {
 	if (!fBitmap)
 		return;
-	(*width) = fBitmap->Bounds().Width();
-	(*height) = fBitmap->Bounds().Height();
+	*width = fBitmap->Bounds().Width();
+	*height = fBitmap->Bounds().Height();
 }
 
 
 BarcodeFilter::BarcodeFilter()
-	:BMessageFilter(B_ANY_DELIVERY,B_ANY_SOURCE)
+	:
+	BMessageFilter(B_ANY_DELIVERY, B_ANY_SOURCE)
 {
 	fScannerEvent = false;
 	fScannerEventTime = 0;
@@ -95,9 +100,13 @@ BarcodeFilter::Filter(BMessage *message, BHandler **target)
 	int32 key;
 	switch (message->what){
 		case B_KEY_DOWN:
-			if (fScannerEvent){
+			if (fScannerEvent) {
 				BString sKey;
-				message->FindString("bytes",&sKey);
+				message->FindString("bytes", &sKey);
+				// Haiku returns UFT8 input from the scanner. We ignore the UFT8 
+				// control bytes since we only expect numbers...
+				if (sKey.CountChars() > 0 && !isdigit(sKey.String()))
+					return B_SKIP_MESSAGE;
 				PRINT(("barcode key: %s\n", sKey.String()));
 				if (sKey.FindFirst("b") < 0)
 					fBarcode += sKey;
@@ -106,18 +115,16 @@ BarcodeFilter::Filter(BMessage *message, BHandler **target)
 			}
 		break;
 		case  B_UNMAPPED_KEY_DOWN:
-			message->FindInt32("key",&key);
-			if ( key == PRE_POST_FIX ){ 
-				PRINT(("unmapped barcode key: %i\n",key));
+			message->FindInt32("key", &key);
+			if (key == PRE_POST_FIX) { 
 				//scanner event 
-				if (fScannerEvent || fScannerEventTime + 50000 > system_time()){
+				if (fScannerEvent || fScannerEventTime + 50000 > system_time()) {
 					fScannerEvent = false;
-					PRINT(("barcode readed: %s\n",fBarcode.String()));
+					PRINT(("barcode read: %s\n",fBarcode.String()));
 					message->what = BARCODE_ENTERED;
-					message->AddString("barcode",fBarcode);
+					message->AddString("barcode", fBarcode);
 					fBarcode = "";
-				}
-				else {
+				} else {
 					fScannerEvent = true;
 					fScannerEventTime = system_time();
 				}
@@ -129,18 +136,18 @@ BarcodeFilter::Filter(BMessage *message, BHandler **target)
 
 
 MainFilter::MainFilter()
-	:BMessageFilter(B_ANY_DELIVERY,B_ANY_SOURCE,B_KEY_DOWN)
-{
-	
+	:
+	BMessageFilter(B_ANY_DELIVERY, B_ANY_SOURCE, B_KEY_DOWN)
+{	
 }
 
 
 filter_result 
-MainFilter::Filter(BMessage *message, BHandler **target)
+MainFilter::Filter(BMessage* message, BHandler** target)
 {
 	int8 byte;
 	message->FindInt8("byte", &byte);
-	switch(byte) {
+	switch (byte) {
 		case B_ESCAPE:
 			message->what = ESCAPE_PRESSED;
 			break;
@@ -295,6 +302,15 @@ MainWindow::MessageReceived(BMessage *msg)
 					be_app->ShowCursor();
 					fViewStack->SelectView(STACK_PRODUCT_VIEW);
 					fProductView->MakeFocus(true);
+				}
+				if (mainmenuitem && mainmenuitem->fMenuItem == MAIN_MENU_INVENTUR) {
+					BAlert* alert = new BAlert("Warnung",
+						"Produkt anzahl auf Null setzen? WIRKLICH?",
+						"JA WIKLICH", "Abrechen", NULL, B_WIDTH_AS_USUAL,
+						B_WARNING_ALERT);
+					int returnValue = alert->Go();
+					if (returnValue == 0)
+						be_app->PostMessage(REST_PRODUCTS_COUNT);
 				}
 				if (mainmenuitem && mainmenuitem->fMenuItem == MAIN_MENU_EXIT)
 					be_app->PostMessage(QUIT);

@@ -12,14 +12,16 @@
 
 
 MainListItem::MainListItem(int8 menuitem, const char *text)
-							:BStringItem(text){
-	fMenuItem = menuitem;
+	:
+	BStringItem(text),
+	fMenuItem(menuitem)
+{
 }
 
 
 MainView::MainView(BRect bounds)
 	:
-	BView(bounds, "mainview", B_FOLLOW_ALL_SIDES, B_WILL_DRAW| B_FRAME_EVENTS)
+	BView(bounds, "mainview", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
 {
 	SetViewColor(kBorderColor);
 	BRect mainlistRect = bounds;
@@ -34,6 +36,7 @@ MainView::MainView(BRect bounds)
 	
 	fMainMenuListView->AddItem(new MainListItem(MAIN_MENU_SELL,"Verkauf"));
 	fMainMenuListView->AddItem(new MainListItem(MAIN_MENU_PRODUCTS,"Produkt Uebersicht"));
+	fMainMenuListView->AddItem(new MainListItem(MAIN_MENU_INVENTUR,"Inventur"));
 	fMainMenuListView->AddItem(new MainListItem(MAIN_MENU_EXIT,"Computer ausschalten"));
 	AddChild(fMainMenuListView); 
 	
@@ -68,7 +71,6 @@ MainView::MakeFocus(bool focused)
 
 void MainListView::KeyDown(const char *bytes, int32 numBytes)
 {
-	//PRINT(("Input: %s\n"));
 	BListView::KeyDown(bytes,numBytes);
 }
 

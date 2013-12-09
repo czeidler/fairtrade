@@ -18,9 +18,6 @@
 #include "blayout.h"
 #include "timer.h"
 
-const uint SAVE_TRADE = '&str';
-const uint UPDATE_TRADE = '&upt';
-
 const int8 WELCOME_VIEW = 0;
 const int8 SELL_VIEW = 1;
 

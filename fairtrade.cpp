@@ -190,6 +190,17 @@ TradeApp::MessageReceived(BMessage *msg)
 			msg->FindPointer("tradeinfo",&(void*)tradeInfo);
 			RemoveTrade(tradeInfo);
 			break;
+		case REST_PRODUCTS_COUNT:
+			PRINT(("ResetProductsCount\n"));
+			fStock->ResetProductsCount();
+			for (int i = 0; i < fProducts->CountItems(); i++) {
+				product_f* product = (product_f*)fProducts->ItemAt(i);
+				product->supplies = 0;
+				BMessage msg(UPDATE_PRODUCT);
+				msg.AddPointer("product", product);
+				fMainWindowMessenger->SendMessage(&msg);
+			}
+			break;
 		case QUIT:
 			//create the export dir if not exist
 			dir.CreateDirectory(fExportPath.String(), &dir);
@@ -221,7 +232,7 @@ TradeApp::InsertProductToDatabase(product_f *product)
 {
 	product_f *prod = FindProduct(product->barcode);
 	if (prod != NULL ) {
-		fStock->UpdateProduct(prod->id,*product);
+		fStock->UpdateProduct(prod->id, *product);
 		BMessage msg;
 		product->id = prod->id;
 		product->Archive(&msg);

@@ -11,6 +11,7 @@
 #include <Alert.h>
 #include <Screen.h>
 
+#include "fairtrade.h"
 #include "mainwindow.h"
 
 
@@ -28,7 +29,8 @@ const uint SUPPLIES_COLUMN = 2;
 
 
 ProductView::ProductView(BRect bounds)
-		:BView(bounds, "productview", B_FOLLOW_ALL, B_WILL_DRAW| B_FRAME_EVENTS)
+		:
+		BView(bounds, "productview", B_FOLLOW_ALL, B_WILL_DRAW | B_FRAME_EVENTS)
 {
 	SetViewColor(kBorderColor);
 	BRect mainlistRect = bounds;
@@ -166,8 +168,8 @@ ProductView::UpdateProduct(product_f *product)
 		if (row == NULL)
 			break;
 		
-		if(row->product == product){
-			if(product->valid == false){
+		if (row->product == product) {
+			if (product->valid == false) {
 				fProductListView->RemoveRow(row);
 				fUnvalidList.AddItem(product);
 				return;
@@ -187,10 +189,10 @@ ProductView::UpdateProduct(product_f *product)
 		} 
 	}
 	
-	for(int i = 0; i < fUnvalidList.CountItems(); i++)
+	for (int i = 0; i < fUnvalidList.CountItems(); i++)
 	{
 		product_f* prod = (product_f*)fUnvalidList.ItemAt(i);
-		if(prod == product && prod->valid){
+		if (prod == product && prod->valid) {
 			fUnvalidList.RemoveItem(i);
 			AddProduct(product);	
 			break;
@@ -207,6 +209,7 @@ EditProductWindow::GetProductInfo(product_f *pinfo)
 	pinfo->name = fNameEdit->Text();
 	pinfo->prize = atof(fPrizeEdit->Text());
 	pinfo->comment = fCommentEdit->Text();
+	pinfo->valid = true;
 	
 	//PRINT(("supplies%i, %i\n",atoi(fSuppliesEdit->Text()), fProduct->supplies));
 	pinfo->supplies = atoi(fSuppliesEdit->Text());
@@ -356,40 +359,46 @@ EditProductWindow::MessageReceived(BMessage *msg)
 				Quit();
 			}
 			else{
-				a = new BAlert("error","Einige Felder sind nicht korrekt gefüllt.","ok");
+				a = new BAlert("error",
+					"Einige Felder sind nicht korrekt gefüllt.",
+					"ok");
 				a->TextView()->SetFont(&font);
 				a->Go();
 			}
 			break;
+			
 		case INVALID_REQUEST:
-			a = new BAlert("Produkt Entfernen","Soll das Produkt bis auf weiters aus der Liste entfernt werden?.", "Abbrechen", "Ok");
+			a = new BAlert("Produkt Entfernen",
+				"Soll das Produkt bis auf weiters aus der Liste entfernt werden?.",
+				"Abbrechen", "Ok");
 			a->SetFeel(B_FLOATING_APP_WINDOW_FEEL);
 			a->TextView()->SetFont(&font);
 			a->SetShortcut(0, B_ESCAPE);
 			a->SetShortcut(1, B_SPACE);
 			a->Go(fInvalidRequestInvoker);
 			break;
+			
 		case INVALID_PRODUCT:
-			//msg->PrintToStream();
 			int32 button;
 			msg->FindInt32("which",&button);
 			
-			if(fSell || button != 1){
+			if(fSell || button != 1)
 				break;
-			}
 			
 			//unvalid product
-			if(GetProductInfo(&productinfo) == B_OK){
+			if (GetProductInfo(&productinfo) == B_OK) {
 				BMessage reply;
 				BMessage msg(UNVALID_PRODUCT);
 				productinfo.Archive(&msg);
-				if(be_app_messenger.SendMessage(&msg,&reply) != B_OK){
+				if (be_app_messenger.SendMessage(&msg,&reply) != B_OK)
 					Quit();
-				}
+				
 				Quit();
 			}
 			else{
-				a = new BAlert("error","Einige Felder sind nicht korrekt gefüllt.","ok");
+				a = new BAlert("error",
+					"Einige Felder sind nicht korrekt gefüllt.",
+					"ok");
 				a->TextView()->SetFont(&font);
 				a->Go();
 			}

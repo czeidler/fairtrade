@@ -12,10 +12,13 @@
 const int MAIN_MENU_MSG = '&MMM';
 const int UPDATE_PRODUCT = '&upr';
 
-//item ids:
-const int8 MAIN_MENU_PRODUCTS = 1;
-const int8 MAIN_MENU_SELL = 2;
-const int8 MAIN_MENU_EXIT = 3;
+// main menu item ids:
+enum {
+	MAIN_MENU_PRODUCTS = 1,
+	MAIN_MENU_SELL,
+	MAIN_MENU_INVENTUR,
+	MAIN_MENU_EXIT
+};
 
 class MainListItem : public BStringItem
 {

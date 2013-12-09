@@ -20,8 +20,6 @@
 
 const uint EDIT_PRODUCT = '&edp';
 const uint ADD_PRODUCT = '&adp';
-const uint SAVE_PRODUCT = '&spr';
-const uint UNVALID_PRODUCT = '&unv';
 const uint PRODUCT_INVOKED = '&piv';
 const uint ADD_TRADE = '&adt';
 const uint NUMBER_MODIFIED = '&nmf';

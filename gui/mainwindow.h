@@ -30,13 +30,10 @@ const uint ESCAPE_PRESSED = '&esc';
 const uint MANUAL_ENTER_REQUEST = '&mer';
 const uint INVALID_PRODUCT = '&f9d';
 const uint INVALID_REQUEST = '&inr';
-const uint SELL_PRODUCT = '&sep';
-const uint REMOVE_TRADE = '&rtr';
 const uint NEXT_BASKET = '&nba';
 const uint PREV_BASKET = '&pba';
 const uint SAVE_BASKET = '&sba';
 const uint UPDATE_BASKET = '&uba';
-const uint QUIT	= '&qui';
 const uint TRADE_TIME_EXPIRED = '&tte';
 
 const uint8 NEXT_BASKET_KEY = B_RIGHT_ARROW;

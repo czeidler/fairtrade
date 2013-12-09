@@ -49,13 +49,13 @@ product_f::product_f()
 void 
 product_f::Archive(BMessage *msg)
 {
-	msg->AddInt32("id",id);
-	msg->AddString("name",name);
-	msg->AddString("barcode",barcode);
-	msg->AddString("comment",comment);
-	msg->AddFloat("prize",prize);
-	msg->AddInt32("supplies",supplies);
-	msg->AddBool("valid",valid);
+	msg->AddInt32("id", id);
+	msg->AddString("name", name);
+	msg->AddString("barcode", barcode);
+	msg->AddString("comment", comment);
+	msg->AddFloat("prize", prize);
+	msg->AddInt32("supplies", supplies);
+	msg->AddBool("valid", valid);
 	msg->AddInt32("insertdate",insertdate);
 }
 
@@ -63,14 +63,14 @@ product_f::Archive(BMessage *msg)
 void 
 product_f::Instantiate(BMessage *msg)
 {
-	msg->FindInt32("id",&id);
-	msg->FindString("name",&name);
-	msg->FindString("barcode",&barcode);
-	msg->FindString("comment",&comment);
-	msg->FindFloat("prize",&prize);
-	msg->FindInt32("supplies",&supplies);
-	msg->FindBool("valid",&valid);
-	msg->FindInt32("insertdate",&insertdate);
+	msg->FindInt32("id", &id);
+	msg->FindString("name", &name);
+	msg->FindString("barcode", &barcode);
+	msg->FindString("comment", &comment);
+	msg->FindFloat("prize", &prize);
+	msg->FindInt32("supplies", &supplies);
+	msg->FindBool("valid", &valid);
+	msg->FindInt32("insertdate", &insertdate);
 }
 
 
@@ -149,7 +149,11 @@ Stock::UpdateProduct(uint id, product_f &product)
 	query += ", comment='"; query += product.comment; query +="' ";
 	query += ", prize='"; query << product.prize; query +="' ";
 	query += ", supplies='"; query << product.supplies; query +="' ";
-	query += ", valid='"; query << product.valid; query +="' ";
+	query += ", valid='";
+	if (product.valid)
+		query << "1'";
+	else
+		query << "0'";
 	query += ", insertdate='"; query << product.insertdate; query +="' ";
 	query += "WHERE id="; query << id;
 	fDatabase->Exec(query.String());
@@ -217,6 +221,7 @@ Stock::RemoveTrade(uint id)
 status_t 
 Stock::GetProducts(BList* list)
 {
+	list->MakeEmpty();
 	fLock.Lock();
 	BString query = "SELECT * FROM products";
 	fDatabase->Exec(query.String());
@@ -232,7 +237,6 @@ Stock::GetProducts(BList* list)
 		product->supplies = atoi(fDatabase->GetValue(i,5).c_str());
 		product->valid = atoi(fDatabase->GetValue(i,6).c_str());
 		product->insertdate = atoi(fDatabase->GetValue(i,7).c_str());
-		//PRINT(("insertdate %i\n", product->insertdate));
 	}
 	fLock.Unlock();
 	return B_OK;
@@ -246,8 +250,7 @@ Stock::GetTrades(BList* list)
 	BString query = "SELECT * FROM trades";
 	fDatabase->Exec(query.String());
 	BString result;
-	for (int i=0; i<fDatabase->NumRows(); i++ )
-	{
+	for (int i = 0; i < fDatabase->NumRows(); i++) {
 		trade_f *trade = new trade_f;
 		list->AddItem(trade);
 		trade->id = atoi(fDatabase->GetValue(i,0).c_str());
@@ -260,3 +263,13 @@ Stock::GetTrades(BList* list)
 	return B_OK;
 }
 
+status_t
+Stock::ResetProductsCount()
+{
+	fLock.Lock();
+	BString query = "UPDATE products SET supplies=0";
+	fDatabase->Exec(query.String());
+	status_t status = fDatabase->Exec("COMMIT");
+	fLock.Unlock();
+	return status;
+}
