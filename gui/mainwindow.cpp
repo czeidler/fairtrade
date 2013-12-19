@@ -105,7 +105,7 @@ BarcodeFilter::Filter(BMessage *message, BHandler **target)
 				message->FindString("bytes", &sKey);
 				// Haiku returns UFT8 input from the scanner. We ignore the UFT8 
 				// control bytes since we only expect numbers...
-				if (sKey.CountChars() > 0 && !isdigit(sKey.String()))
+				if (sKey.Length() > 0 && !isdigit(sKey.ByteAt(0)))
 					return B_SKIP_MESSAGE;
 				PRINT(("barcode key: %s\n", sKey.String()));
 				if (sKey.FindFirst("b") < 0)
@@ -310,7 +310,7 @@ MainWindow::MessageReceived(BMessage *msg)
 						B_WARNING_ALERT);
 					int returnValue = alert->Go();
 					if (returnValue == 0)
-						be_app->PostMessage(REST_PRODUCTS_COUNT);
+						be_app->PostMessage(RESET_PRODUCTS_COUNT);
 				}
 				if (mainmenuitem && mainmenuitem->fMenuItem == MAIN_MENU_EXIT)
 					be_app->PostMessage(QUIT);

@@ -46,8 +46,7 @@ SellListView::KeyDown(const char *bytes, int32 numBytes)
 	if(!row){
 		return;
 	}
-	if(row && bytes[0] > 47 && bytes[0] < 58)
-	{
+	if (row && bytes[0] > 47 && bytes[0] < 58) {
 		uint8 number;
 		if(row->fFirstNumber > 0 && (real_time_clock() - row->fLastKeyTime) < 2){
 			number = row->fFirstNumber * 10;
@@ -67,13 +66,13 @@ SellListView::KeyDown(const char *bytes, int32 numBytes)
 		be_app->PostMessage(&msg);
 		SetBackgroundColor(kModifiedColor);
 	}
-	if(bytes[0] == REMOVE_TRADE_KEY){
+	if (bytes[0] == REMOVE_TRADE_KEY) {
 		RemoveRow(row);
-		delete row;
 		BMessage msg(REMOVE_TRADE);
 		msg.AddPointer("tradeinfo",row->fTradeInfo);
 		be_app->PostMessage(&msg);
 		SetBackgroundColor(kModifiedColor);
+		delete row;
 	}
 	BColumnListView::KeyDown(bytes,numBytes);
 }
@@ -353,12 +352,10 @@ SellView::UpdateTrade(trade_info *tradeInfo)
 			BString sum;
 			sum << tradeInfo->basket->sum;
 			fSumString->SetText(sum.String());
-			if(tradeInfo->basket->saved){
+			if (tradeInfo->basket->saved)
 				fTradeListView->SetBackgroundColor(kSavedColor);
-			}
-			else{
+			else
 				fTradeListView->SetBackgroundColor(kModifiedColor);
-			}
 			return;
 		} 
 	}
@@ -402,7 +399,7 @@ void
 SellView::SaveCurrentBasket()
 {
 	BMessage msg(SAVE_TRADE);
-	msg.AddPointer("basket",fCurrentBasket);
+	msg.AddPointer("basket", fCurrentBasket);
 	be_app->PostMessage(&msg);
 	fTradeListView->SetBackgroundColor(kSavedColor);
 	fCurrentBasket = NULL;

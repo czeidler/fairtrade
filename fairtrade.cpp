@@ -176,21 +176,20 @@ TradeApp::MessageReceived(BMessage *msg)
 			SellProduct(barcode,tradetime);
 			break;
 		case SAVE_TRADE:
-			msg->FindPointer("basket",&(void*)basket);
-			if(basket){
+			msg->FindPointer("basket", (void**)&basket);
+			if (basket != NULL)
 				SaveBasket(basket);
-			}
 			break;
 		case UPDATE_TRADE:
 			msg->FindInt8("number",&number);
-			msg->FindPointer("tradeinfo",&(void*)tradeInfo);
+			msg->FindPointer("tradeinfo", (void**)&tradeInfo);
 			UpdateTrade(tradeInfo, number);
 			break;
 		case REMOVE_TRADE:
-			msg->FindPointer("tradeinfo",&(void*)tradeInfo);
+			msg->FindPointer("tradeinfo", (void**)&tradeInfo);
 			RemoveTrade(tradeInfo);
 			break;
-		case REST_PRODUCTS_COUNT:
+		case RESET_PRODUCTS_COUNT:
 			PRINT(("ResetProductsCount\n"));
 			fStock->ResetProductsCount();
 			for (int i = 0; i < fProducts->CountItems(); i++) {
@@ -208,7 +207,7 @@ TradeApp::MessageReceived(BMessage *msg)
 			if(fConfig.shutdownOnExit){
 				//shutdown
 				arg_c = 1;
-				arg_v = (char **)malloc(sizeof(char *) * (arg_c + 1));
+				arg_v = (char**)malloc(sizeof(char*) * (arg_c + 1));
 				BPath bin;
 				find_directory(B_SYSTEM_BIN_DIRECTORY, &bin);
 				bin.Append("shutdown");
@@ -335,7 +334,7 @@ TradeApp::SellProduct(BString barcode,time_t date)
 	} else {
 		oldTradeInfo->trade->number+= 1;
 		BMessage msg(UPDATE_TRADE);
-		msg.AddPointer("tradeinfo",oldTradeInfo);
+		msg.AddPointer("tradeinfo", oldTradeInfo);
 		basket->sum+= prod->prize;
 		oldTradeInfo->basket->saved = false;
 		fMainWindowMessenger->SendMessage(&msg);
@@ -346,7 +345,6 @@ TradeApp::SellProduct(BString barcode,time_t date)
 void			
 TradeApp::UpdateTrade(trade_info *tradeInfo, int32 number)
 {
-	
 	float prize = tradeInfo->trade->prize;
 	tradeInfo->basket->sum-=prize * tradeInfo->trade->number;
 	tradeInfo->basket->sum+=prize * number;
@@ -355,10 +353,11 @@ TradeApp::UpdateTrade(trade_info *tradeInfo, int32 number)
 	if (tradeInfo->state != TRADE_STATE_ADD)
 		tradeInfo->state = TRADE_STATE_UPDATE;
 
-	BMessage msg(UPDATE_TRADE);
-	msg.AddPointer("tradeinfo",tradeInfo);
-	fMainWindowMessenger->SendMessage(&msg);
 	tradeInfo->basket->saved = false;
+	
+	BMessage msg(UPDATE_TRADE);
+	msg.AddPointer("tradeinfo", tradeInfo);
+	fMainWindowMessenger->SendMessage(&msg);
 }
 
 
@@ -458,7 +457,6 @@ TradeApp::SaveBasket(basket_f *basket)
 				info->product->supplies-= info->trade->number;
 				info->oldnumber = info->trade->number;
 				fStock->UpdateProduct(info->trade->productid, *(info->product));
-				//PRINT(("save : add trade\n"));
 				break;
 			case TRADE_STATE_UPDATE:
 				fStock->UpdateTrade(info->trade->id,*(info->trade));
@@ -480,12 +478,13 @@ TradeApp::SaveBasket(basket_f *basket)
 				break;
 		}
 		
+		basket->saved = true;
+		
 		//update product list
 		BMessage msgUpdate(UPDATE_PRODUCT);
 		msgUpdate.AddPointer("product", product);
-		fMainWindowMessenger->SendMessage(&msgUpdate);
-	
-		basket->saved = true;
+		BMessage reply;
+		fMainWindowMessenger->SendMessage(&msgUpdate, &reply);
 	}
 	
 	if (basket->trades.CountItems() == 0){

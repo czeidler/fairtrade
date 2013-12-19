@@ -19,7 +19,7 @@ const uint SAVE_TRADE = '&str';
 const uint UPDATE_TRADE = '&upt';
 const uint UNVALID_PRODUCT = '&unv';
 const uint SELL_PRODUCT = '&sep';
-const uint REST_PRODUCTS_COUNT = '&rpc';
+const uint RESET_PRODUCTS_COUNT = '&rpc';
 
 
 class TradeApp  : public BApplication {
