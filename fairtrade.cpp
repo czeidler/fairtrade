@@ -24,30 +24,25 @@ TradeApp::TradeApp(char *signature)
 	BApplication(signature)
 {
 	//read config
-	app_info appInfo;
-	GetAppInfo(&appInfo);
-	BEntry appEntry(&appInfo.ref);
-	BPath appPath;
-	appEntry.GetPath(&appPath);
-	
-	BString configPath = appPath.Path();
-	configPath.RemoveLast(appInfo.ref.name);
-	chdir(configPath.String());
-	configPath+= "./";
-	configPath+= kConfigFile;
-	BPath configP(configPath.String(), NULL, true);
+	BPath path;
+	if (find_directory (B_USER_SETTINGS_DIRECTORY, &path) != B_OK)
+		return;
+	path.Append ("fairtrade");
+
+	BPath configP(path.Path());
+	configP.Append(kConfigFile);
 
 	fConfig.ReadConfig(configP.Path());
 	
-	BString dbString = fConfig.databasePath;
-	if(dbString.FindFirst("/") != 0){
+	BPath dbP;
+	if(fConfig.databasePath.FindFirst("/") != 0){
 		//relative path
-		dbString = appPath.Path();
-		dbString.RemoveLast(appInfo.ref.name);
-		dbString+= fConfig.databasePath;
-	}
+		dbP.SetTo(path.Path());
+		dbP.Append(fConfig.databasePath);
+	} else
+		dbP.SetTo(fConfig.databasePath);
 	//create dir if not exist
-	BString dbDir(dbString);
+	BString dbDir(dbP.Path());
 	dbDir.Truncate(dbDir.IFindLast("/"));
 	
 	BDirectory dir;
@@ -57,13 +52,12 @@ TradeApp::TradeApp(char *signature)
 	fExportPath = fConfig.csvExportPath;
 	if(fExportPath.FindFirst("/") != 0){
 		//relative path
-		fExportPath = appPath.Path();
-		fExportPath.RemoveLast(appInfo.ref.name);
+		fExportPath = path.Path();
 		fExportPath+= fConfig.csvExportPath;
 	}
 	
 	HideCursor();
-	fStock = new Stock(dbString.String());
+	fStock = new Stock(dbP.Path());
 	
 	fMainWindow = new MainWindow(BRect(100, 300, 400, 700), "Fair Trade", fConfig);
 	fMainWindowMessenger = new BMessenger(fMainWindow);
