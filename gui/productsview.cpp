@@ -152,7 +152,7 @@ ProductView::BarcodeEntered(BString barcode)
 
 
 void	
-ProductView::EditProduct(product_f *product = NULL)
+ProductView::EditProduct(product_f *product)
 {
 	BWindow *EditWindow = new EditProductWindow(BRect(150,200,700,700),"edit product",product);
 	EditWindow->Show();

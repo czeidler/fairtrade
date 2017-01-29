@@ -5,7 +5,7 @@
  
 #include "ImportProducts.h"
 
-#include <fstream.h>
+#include <fstream>
 #include <sstream>
 
 #define DEBUG 1
@@ -42,18 +42,18 @@ ImportProducts::Import()
 		//line.get(buffer, 1024, '\t');
 		
 		//barcode
-		char* buf;
-		line.gets(&buf, '\t');
+		char buf[256];
+		line.getline(buf, 256, '\t');
 		string word = buf;
 		if(word == "Barcode" || word == ""){
 			continue;
 		}
 		product.barcode = word.c_str();
 		//name
-		line.gets(&buf, '\t');
+		line.getline(buf, 256, '\t');
 		product.name = buf;
 		//comment
-		line.gets(&buf, '\t');
+		line.getline(buf, 256, '\t');
 		product.comment = buf;
 		//prize
 		double prize;
