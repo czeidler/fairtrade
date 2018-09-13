@@ -22,8 +22,8 @@ class config{
 public:
 	config()
 	{
-		databasePath = "./fairtrade.db";
-		csvExportPath = "./CSVExport";
+		databasePath = "fairtrade.db";
+		csvExportPath = "CSVExport";
 		welcomeString1 = "Willkommen";
 		welcomeString2 = "bei der Eine-Welt-Gruppe Anrath";
 		shutdownOnExit = true;

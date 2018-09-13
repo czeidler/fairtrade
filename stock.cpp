@@ -56,7 +56,7 @@ product_f::Archive(BMessage *msg)
 	msg->AddFloat("prize", prize);
 	msg->AddInt32("supplies", supplies);
 	msg->AddBool("valid", valid);
-	msg->AddInt32("insertdate",insertdate);
+	msg->AddInt64("insertdate",(int64)insertdate);
 }
 
 
@@ -70,7 +70,9 @@ product_f::Instantiate(BMessage *msg)
 	msg->FindFloat("prize", &prize);
 	msg->FindInt32("supplies", &supplies);
 	msg->FindBool("valid", &valid);
-	msg->FindInt32("insertdate", &insertdate);
+	int64 insertwhen;
+	msg->FindInt64("insertdate", &insertwhen);
+	insertdate = insertwhen;
 }
 
 
